@@ -1,9 +1,9 @@
 library(tidyverse)
 library(lubridate)
 
-n<-length(c(2015:2022))
+n<-length(c(2015:2023))
 
-dates<-tibble( year = rep(c(2015:2022),12),
+dates<-tibble( year = rep(c(2015:2023),12),
                month = c(rep("01",n),
                          rep("02",n),
                          rep("03",n),
@@ -18,7 +18,8 @@ dates<-tibble( year = rep(c(2015:2022),12),
                          rep("12",n)),
                day="01") %>%
   unite(date,sep="-") %>%
-  mutate(date = ymd(date) )
+  mutate(date = ymd(date) ) %>%
+  filter(date<="2023-04-01")
 
 
 
@@ -26,7 +27,8 @@ dates<-tibble( year = rep(c(2015:2022),12),
   df<-dates %>%
   mutate( BC=30,
           BC=ifelse(date>"2018-03-01",35,BC),
-          BC=ifelse(date>"2019-03-01",40,BC),
+          BC=ifelse((date>"2019-03-01"& date<="2022-04-01"),40,BC),
+          BC=ifelse((date>="2022-04-01"& date<="2023-04-01"),50,BC),
           
           
           AB=0,
@@ -35,19 +37,19 @@ dates<-tibble( year = rep(c(2015:2022),12),
           AB=ifelse((date>="2020-01-01"& date<"2020-04-01"),20,AB),
           AB=ifelse((date>="2020-04-01"& date<"2021-04-01"),30,AB),
           AB=ifelse((date>="2021-04-01"& date<"2022-04-01"),40,AB),
-          AB=ifelse((date>="2022-04-01"& date<"2023-04-01"),50,AB),
+          AB=ifelse((date>="2022-04-01"& date<="2023-04-01"),50,AB),
           CA=0,
           CA=ifelse((date>="2019-04-01"& date<"2020-04-01"),20,CA),
           CA=ifelse((date>="2020-04-01"& date<"2021-04-01"),30,CA),
           CA=ifelse((date>="2021-04-01"& date<"2022-04-01"),40,CA),
-          CA=ifelse((date>="2022-04-01"& date<"2023-04-01"),50,CA)
+          CA=ifelse((date>="2022-04-01"& date<="2023-04-01"),50,CA)
             ) 
     
 
 df<-  df %>%
     pivot_longer(BC:CA,names_to="Region",values_to="price") %>%
     mutate(Projection="Actual",
-           Projection=ifelse(date>"2021-01-01","Projected",Projection)
+           Projection=ifelse(date>="2021-01-01","Projected",Projection)
            )
 df %>%
 ggplot(aes(color=Region))+

@@ -61,7 +61,7 @@ prices<-c("15.01
 23.69
 23.17
 22.03
-NA")
+22.15")
 
 prices<-prices %>%
   str_split("\n") %>%
